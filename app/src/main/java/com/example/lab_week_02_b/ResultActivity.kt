@@ -1,5 +1,7 @@
 package com.example.lab_week_02_b
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.TextView
@@ -15,16 +17,28 @@ class ResultActivity : AppCompatActivity() {
         val colorCode = intent.getStringExtra(MainActivity.COLOR_KEY)
 
         if (!colorCode.isNullOrEmpty()) {
-            val backgroundScreen =
-                findViewById<ConstraintLayout>(R.id.background_screen)
-            backgroundScreen.setBackgroundColor(Color.parseColor("#$colorCode"))
+            val backgroundScreen = findViewById<ConstraintLayout>(R.id.background_screen)
 
-            val resultMessage =
-                findViewById<TextView>(R.id.color_code_result_message)
-            resultMessage.text = getString(
-                R.string.color_code_result_message,
-                colorCode.uppercase()
-            )
+            try {
+                backgroundScreen.setBackgroundColor(Color.parseColor("#$colorCode"))
+
+                val resultMessage = findViewById<TextView>(R.id.color_code_result_message)
+                resultMessage.text = getString(
+                    R.string.color_code_result_message,
+                    colorCode.uppercase()
+                )
+
+            } catch (ex: IllegalArgumentException) {
+                val errorIntent = Intent()
+                errorIntent.putExtra(MainActivity.ERROR_KEY, true)
+                setResult(Activity.RESULT_OK, errorIntent)
+                finish()
+            }
+        } else {
+            val errorIntent = Intent()
+            errorIntent.putExtra(MainActivity.ERROR_KEY, true)
+            setResult(Activity.RESULT_OK, errorIntent)
+            finish()
         }
     }
 }
